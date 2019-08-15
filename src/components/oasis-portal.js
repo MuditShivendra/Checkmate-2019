@@ -43,12 +43,12 @@ AFRAME.registerComponent('oasis-portal', {
           localStorage.setItem('previousZoneImage', this.sectorType);
           localStorage.setItem('visitedZones', JSON.stringify(visitedZones));
           
-          document.write('GETTING DATA!!')
+          
           fetch(this.data.href).then((response) => {
             window.location.href = this.data.href
           })
         }
-      }, 500);
+      }, 0);
     });
 
     el.addEventListener('mouseenter', () => {
