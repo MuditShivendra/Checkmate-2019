@@ -6,49 +6,135 @@
   <head>
     <title>OASIS - {{ 'Home' if IS_HOME else name }}</title>
     <link rel="shortcut icon" href="{{ ROOT }}assets/img/favicon.png" type="image/x-icon">
-    <script src="https://rawgit.com/ngokevin/aframe/posfirstdist/dist/aframe-master.min.js"></script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">    <script src="https://rawgit.com/ngokevin/aframe/posfirstdist/dist/aframe-master.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Merriweather&display=swap" rel="stylesheet"> 
+   
     <script src="{{ ROOT }}build/socket.io.min.js"></script>
     <script src="{{ ROOT }}build/easyrtc.js"></script>
     <script src="{{ ROOT }}build/build.js"></script>
     <script src="https://poc.virtuleap.com/library/gar-calculator-aframe.v1.0.min.js"></script>
     {% if IS_PRODUCTION %}<style>.a-inspector-loader{ display: none; }</style>{% endif %}
-    <style>
-      html { background: #111; }
-    </style>
+
+
+    <script>
+    
+    AFRAME.registerComponent('ques-box', {
+          init: function () {
+            let modal = document.querySelector('.modal')
+            let boards = document.getElementsByClassName('question-board')
+            Array.from(boards).forEach((el) => {
+              el.addEventListener('click', () => {
+                $("#modalPush").modal()
+              })
+            })
+
+            // this.el.addEventListener("click", (e) => {
+                
+            //     modal.classList.add("show")
+            //     console.log('modal is ',modal)
+            //     modal.showModal(); 
+            //     alert('you clicked on question '+ this.data.q_no);
+            // })
+      }
+    })
+    
+    </script>
+
   </head>
    <script>
         AFRAME.registerComponent('pop-up-question', {
+          schema: {
+            q_no: {type: 'string'},
+           
+          },
+
           init: function () {
             // console.log('element is', this.el)
     
             this.el.addEventListener("click", (e) => {
               // console.log('questions are ', el.toSource())
-                alert('you clicked on question 1');
+
+                // $('#exampleModal').modal('show');
+                // const modal = document.getElementById("exampleModal");
+                // console.log('modal is ',modal)
+                // modal.classList.add("show")
+                // alert('you clicked on question '+ this.data.q_no);
             })
       }
     })
 
-      // window.dataLayer = window.dataLayer || [];
-      //   function gtag(){dataLayer.push(arguments);}
-      //   gtag('js', new Date());
-      //   gtag('config', 'UA-111391431-8');
+    // AFRAME.registerComponent('ques-box', {
+    //       init: function () {
+    //         this.el.addEventListener("click", (e) => {
+    //             $('#exampleModal').modal('show');
+    //             const modal = document.getElementById("exampleModal");
+    //             console.log('modal is ',modal)
+    //             modal.showModal(); 
+    //             alert('you clicked on question '+ this.data.q_no);
+    //         })
+    //   }
+    // })
 
-      //   let els = document.getElementsByClassName('question-board');
-      //   console.log('the classes are' , els)
-      //   Array.from(els).forEach((el) => {
-      //     console.log('hi')
-      //     console.log(el)
-      //     el.addEventListener('mouseover', () => {
-      //       console.log('bye')
-      //       alert('hello')
-      //     })
-      //   })
+    
 
-        // const func = () => {
-        //   alert('hi')
-        // }
-        </script> 
+      window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-111391431-8');
+  </script> 
+
   <body>
+
+    <div class="modal fade" id="modalPush" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-notify modal-info" role="document">
+      <!--Content-->
+      <div class="modal-content text-center">
+        <!--Header-->
+        <div class="modal-header d-flex justify-content-center">
+          <p class="heading">Question 1</p>
+        </div>
+  
+        <!--Body-->
+        <div class="modal-body">
+  
+          <i class="fa fa-question-circle" aria-hidden="true"></i>
+  
+          <p class='question-content'>Do you want to receive the push notification about the newest posts?</p>
+  
+        </div>
+  
+        <!--Footer-->
+        <div class="modal-footer flex-center">
+          <a href="https://mdbootstrap.com/products/jquery-ui-kit/" class="btn btn-info">Yes</a>
+          <a type="button" class="btn btn-outline-info waves-effect" data-dismiss="modal">No</a>
+        </div>
+      </div>
+      <!--/.Content-->
+    </div>
+  </div>
+
+    <style>
+      .modal-header {
+        background-color: #22b9d4;
+        color: white;
+        font-size: 17px;
+        font-family: 'Merriweather', serif;
+        
+      }
+    .fa-question-circle {
+    font-size: 5.5em;
+    }
+    .question-content{
+      margin-top: 20px;
+    }
+
+    </style>
+
 
     <a-scene
       {% for zoneProperty in zoneProperties %}
@@ -59,7 +145,9 @@
       environment="{{ environment or 'preset: tron; gridColor: orange; dressing1Amount: 80; dressing1Color: #B55; dressing2: islands; dressing2Amount: 30' }}"
       oasis-audio="isHome: {{ IS_HOME }}; zoneSong: {{ song }}"
       teleport-refresh
+      ques-box
       networked-scene="serverURL: shy-teeth.glitch.me; room: {{ seed or 'default' }}; debug: true"  cursor="rayOrigin: mouse">
+
       <a-assets>
         <img id="portalImg" src="{{ ROOT }}assets/img/portal.png">
         <img id="shadowImg" src="{{ ROOT }}assets/img/shadow.png">
@@ -165,7 +253,7 @@
       
         
         <a-entity>
-        <a-entity pop-up-question class="question-board" obj-model="obj: {{ ROOT }}assets/models/question_board/question_board.obj; mtl: {{ ROOT }}assets/models/question_board/materials.mtl " position= "{{ links[i].question_position }}" scale="25 25 25" rotation="0 -30 0" ">
+        <a-entity pop-up-question="q_no: {{ i + 1 }}" class="question-board" obj-model="obj: {{ ROOT }}assets/models/question_board/question_board.obj; mtl: {{ ROOT }}assets/models/question_board/materials.mtl " position= "{{ links[i].question_position }}" scale="25 25 25" rotation="0 -30 0" ">
 
           <a-entity class="portalText" text="color: #4ef580; align: center; value: QUESTION\n{{ i + 1 }}; side: double; width: 1; xOffset: 0.02; zOffset: 0.1" position="0 0 0" rotation="0 0 0" scale="0.3 0.3 0.3"></a-entity>
 
@@ -224,6 +312,7 @@
         
       </script>
     </a-scene>
+    
   </body>
 
 </html>
