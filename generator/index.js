@@ -195,6 +195,7 @@ WORLDS.forEach((zone,index) => {
       if (randomZone.seed === zone.seed) { continue; }
       delete randomZone.links;
       zone.links.push({
+        question_position: question_position(),
         position: randomLinkPosition(),
         zone: Object.assign({}, randomZone)
       })

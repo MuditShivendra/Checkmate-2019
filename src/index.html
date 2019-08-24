@@ -4,31 +4,76 @@
 
 <html>
   <head>
-    <title>OASIS - {{ 'Home' if IS_HOME else name }}</title>
+    <title>CHECKMATE - {{ 'Home' if IS_HOME else name }}</title>
     <link rel="shortcut icon" href="{{ ROOT }}assets/img/favicon.png" type="image/x-icon">
-    <script src="https://rawgit.com/ngokevin/aframe/posfirstdist/dist/aframe-master.min.js"></script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">    <script src="https://rawgit.com/ngokevin/aframe/posfirstdist/dist/aframe-master.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Merriweather&display=swap" rel="stylesheet"> 
+   
     <script src="{{ ROOT }}build/socket.io.min.js"></script>
     <script src="{{ ROOT }}build/easyrtc.js"></script>
     <script src="{{ ROOT }}build/build.js"></script>
     <script src="https://poc.virtuleap.com/library/gar-calculator-aframe.v1.0.min.js"></script>
     {% if IS_PRODUCTION %}<style>.a-inspector-loader{ display: none; }</style>{% endif %}
-    <style>
-      html { background: #111; }
-    </style>
+
+
+    <script src="./components/question-modal.js"></script>
+
   </head>
-  <script>
-        AFRAME.registerComponent('pop-up-question', {
-          init: function () {
-            console.log('element is', this.el)
-    
-            this.el.addEventListener('click', () => {
-              console.log('questions are ', el.toSource())
-                alert('you clicked on question 1');
-        
-            })
-      }})
-        </script>
+   <script>
+      window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-111391431-8');
+  </script> 
+
   <body>
+
+    {% include './templates/questions.html' %}
+
+    {% for i in range(0,links.length) %}
+      {{ question(i) }}
+
+    {% endfor %}
+    
+
+    <style>
+      .modal-header {
+        background-color: #22b9d4;
+        color: white;
+        font-size: 17px;
+        font-family: 'Merriweather', serif;
+        
+      }
+    .fa-question-circle {
+    font-size: 5.5em;
+    }
+    .question-content{
+      margin-top: 20px;
+    }
+
+    .modal {
+      text-align: center;
+    }
+
+    @media screen and (min-width: 768px) { 
+      .modal:before{
+        display: inline-block;
+        vertical-align: middle;
+        height: 100%;
+      }
+    }
+
+    .modal-dialog {
+      display: inline-block;
+      text-align: left;
+      vertical-align: middle;
+    }
+    </style>
+
 
     <a-scene
       {% for zoneProperty in zoneProperties %}
@@ -39,7 +84,9 @@
       environment="{{ environment or 'preset: tron; gridColor: orange; dressing1Amount: 80; dressing1Color: #B55; dressing2: islands; dressing2Amount: 30' }}"
       oasis-audio="isHome: {{ IS_HOME }}; zoneSong: {{ song }}"
       teleport-refresh
-      networked-scene="serverURL: shy-teeth.glitch.me; room: {{ seed or 'default' }}; debug: true">
+      ques-box
+      networked-scene="serverURL: shy-teeth.glitch.me; room: {{ seed or 'default' }}; debug: true"  cursor="rayOrigin: mouse">
+
       <a-assets>
         <img id="portalImg" src="{{ ROOT }}assets/img/portal.png">
         <img id="shadowImg" src="{{ ROOT }}assets/img/shadow.png">
@@ -70,7 +117,7 @@
           raycastable
           animation__mouseenterscale="property: scale; from: 1 1 1; to: 1.1 1.1 1.1; easing: easeInOutQuad; dir: alternate; loop: true; startEvents: mouseenter; dur: 1000; pauseEvents: mouseleave"></a-mixin>
 
-        <a-mixin id="shadow"
+        <a-mixin id="shadow"`
             geometry="primitive: plane; width: 2; height: 2"
             material="src: #shadowImg; shader: flat; transparent: true"
             rotation="-90 0 0"></a-mixin>
@@ -124,6 +171,9 @@
           {% endif %}
       </a-entity>
 
+        
+
+
       <a-entity id="portalShadows"
         {% if IS_HOME %}layout="type: circle; radius: 10; plane: xz"{% endif %}
         position="0 0.05 0">
@@ -134,6 +184,16 @@
           <a-entity mixin="shadow" {% if not IS_HOME %}position="2 0 3"{% endif %}></a-entity>
       </a-entity>
 
+      {% for i in range(0,links.length) %}
+      
+        <a-entity>
+        <a-entity pop-up-question="q_no: {{ i + 1 }}" id="question-{{i}}" class="question-board" obj-model="obj: {{ ROOT }}assets/models/question_board/question_board.obj; mtl: {{ ROOT }}assets/models/question_board/materials.mtl " position= "{{ links[i].question_position }}" scale="25 25 25" rotation="0 -30 0" >
+
+          <a-entity class="portalText" text="color: #4ef580; align: center; value: QUESTION\n{{ i + 1 }}; side: double; width: 1; xOffset: 0.02; zOffset: 0.1" position="0 0 0" rotation="0 0 0" scale="0.3 0.3 0.3"></a-entity>
+
+        </a-entity>
+      </a-entity>
+        {% endfor %}
       {% if IS_HOME %}
         <!-- <a-entity id="jadeKey" obj-model="obj: {{ ROOT }}assets/models/key/Key_01.obj" material="color: #AAFFAA" position="0 1.6 20" scale="0.005 0.005 0.005" item="message: You've received the Jade Key\nExplore the OASIS\nDiscover the secrets it may unlock\n~; storeAs: jadekey" gar-calculator-element="modelID: 4D8C-0F7086; experience_id: 1EDB-9D2618"></a-entity> -->
 
@@ -141,16 +201,19 @@
         
         <a-entity id="irongiant" obj-model="obj: {{ ROOT }}assets/models/irongiant/model.obj; mtl: {{ ROOT }}assets/models/irongiant/materials.mtl" position="10 0 -25" scale="8 8 8" rotation="0 -30 0"></a-entity>
         
-        {% for i in range(0,links.length) %}
+        <!-- {% for i in range(0,links.length) %}
       
-        <a-entity pop-up-question class="question-board" obj-model="obj: {{ ROOT }}assets/models/question_board/question_board.obj; mtl: {{ ROOT }}assets/models/question_board/materials.mtl " position= "{{ links[i].question_position }}" scale="25 25 25" rotation="0 -30 0">
+        
+        <a-entity>
+        <a-entity pop-up-question="q_no: {{ i + 1 }}" id="question-{{i}}" class="question-board" obj-model="obj: {{ ROOT }}assets/models/question_board/question_board.obj; mtl: {{ ROOT }}assets/models/question_board/materials.mtl " position= "{{ links[i].question_position }}" scale="25 25 25" rotation="0 -30 0" >
 
           <a-entity class="portalText" text="color: #4ef580; align: center; value: QUESTION\n{{ i + 1 }}; side: double; width: 1; xOffset: 0.02; zOffset: 0.1" position="0 0 0" rotation="0 0 0" scale="0.3 0.3 0.3"></a-entity>
 
         </a-entity>
-
+      </a-entity>
       
-        {% endfor %}
+        {% endfor %} -->
+       
         <a-entity
           id="logo"
           animation="property: object3D.position.y; from: 10; to: 11; dir: alternate; loop: true; dur: 8000; easing: easeInOutCubic"
@@ -194,16 +257,14 @@
 
       {% if not IS_PRODUCTION %}
         <a-entity id="mouseCursor" cursor="rayOrigin: mouse" raycaster="objects: [raycastable]; recursive: false" debug-cursor></a-entity>
-      {% endif %}
+      {% endif %}raycaster
 
       <script async src="https://www.googletagmanager.com/gtag/js?id=UA-111391431-8"></script>
       <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'UA-111391431-8');
+        
       </script>
     </a-scene>
+    
   </body>
 
 </html>

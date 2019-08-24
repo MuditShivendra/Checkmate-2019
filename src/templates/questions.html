@@ -1,8 +1,33 @@
-{% macro question (i) %}
-<a-entity question-alert id="question" obj-model="obj: {{ ROOT }}assets/models/question_board/question_board.obj; mtl: {{ ROOT }}assets/models/question_board/materials.mtl " position= "{{ links[i].question_position }}" scale="25 25 25" rotation="0 -30 0">
+{% macro question(i) %}
 
-    <a-entity class="portalText" text="color: #4ef580; align: center; value: QUESTION\n{{ i + 1 }}; side: double; width: 1; xOffset: 0.02; zOffset: 0.1" position="0 0 0" rotation="0 0 0" scale="0.3 0.3 0.3"></a-entity>
+<div class="modal fade" id="modal-{{i}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+aria-hidden="true">
+<div class="modal-dialog modal-notify modal-info" role="document">
+  <!--Content-->
+  <div class="modal-content text-center">
+    <!--Header-->
+    <div class="modal-header d-flex justify-content-center">
+      <p class="heading">Question {{ i + 1 }}</p>
+    </div>
 
-</a-entity>
+    <!--Body-->
+    <div class="modal-body">
 
-{% endmacro %}
+      <i class="fa fa-question-circle" aria-hidden="true"></i>
+
+      <p class='question-content'>What is the answer to this question?</p>
+
+      <input type="text" class="form-control" id="answer-{{i}}" placeholder="answer">
+    </div>
+
+    <!--Footer-->
+    <div class="modal-footer flex-center">
+      <a href="#" class="btn btn-info">Yes</a>
+      <a type="button" class="btn btn-outline-info waves-effect" data-dismiss="modal">No</a>
+    </div>
+  </div>
+  <!--/.Content-->
+</div>
+</div>
+
+{% endmacro %} 
