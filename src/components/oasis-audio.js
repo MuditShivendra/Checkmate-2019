@@ -11,7 +11,7 @@ AFRAME.registerComponent('oasis-audio', {
     var song;
 
     if (data.isHome) {
-      song = utils.assetPath('assets/audio/worldinmyeyes.mp3');
+      song = utils.assetPath('assets/audio/theavengerstheme.mp3');
     } else if (el.hasAttribute('upsidedown')) {
       song = 'https://supermedium.github.io/oasis-audio/egg/strangerthings.mp3';
     } else {
